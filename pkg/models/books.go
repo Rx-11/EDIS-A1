@@ -8,4 +8,5 @@ type Book struct {
 	Genre       string  `json:"genre" gorm:"type:varchar(255)"`
 	Price       float64 `json:"price" gorm:"type:decimal(10,2)"`
 	Quantity    int     `json:"quantity" gorm:"type:int"`
+	Summary     string  `json:"summary" gorm:"type:text"`
 }

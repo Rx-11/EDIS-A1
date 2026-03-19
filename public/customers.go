@@ -2,7 +2,6 @@ package public
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/Rx-11/EDIS-A1/common"
 	"github.com/Rx-11/EDIS-A1/db"
@@ -66,8 +65,5 @@ func createUser(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
-
-	location := c.BaseURL() + "/customers/" + fmt.Sprint(user.ID)
-	c.Set("Location", location)
 	return c.Status(fiber.StatusCreated).JSON(user)
 }

@@ -28,3 +28,27 @@ type fetchUserByIdParam struct {
 type fetchUserByUserIdQuery struct {
 	UserID string `json:"userId" query:"userId" validate:"required"`
 }
+
+type fetchBookByISBNParam struct {
+	ISBN string `json:"isbn" param:"isbn" validate:"required"`
+}
+
+type createBookRequest struct {
+	ISBN        string  `json:"isbn" validate:"required"`
+	Title       string  `json:"title" validate:"required"`
+	Author      string  `json:"author" validate:"required"`
+	Price       float64 `json:"price" validate:"required,gt=0"`
+	Description string  `json:"description"`
+	Genre       string  `json:"genre"`
+	Quantity    int     `json:"quantity" validate:"required,gte=0"`
+}
+
+type updateBookRequest struct {
+	ISBN        string  `json:"isbn" validate:"required"`
+	Title       string  `json:"title" `
+	Author      string  `json:"author"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	Genre       string  `json:"genre"`
+	Quantity    int     `json:"quantity"`
+}
