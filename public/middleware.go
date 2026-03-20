@@ -23,8 +23,9 @@ func init() {
 	})
 }
 
-func parseBody[T any](body T) fiber.Handler {
+func parseBody[T any](_ T) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var body T
 		err := c.BodyParser(&body)
 		if err != nil {
 			log.Println(err)
@@ -45,8 +46,9 @@ func parseBody[T any](body T) fiber.Handler {
 	}
 }
 
-func parseQuery[T any](query T) fiber.Handler {
+func parseQuery[T any](_ T) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var query T
 		err := c.QueryParser(&query)
 		if err != nil {
 			log.Println(err)
@@ -67,8 +69,9 @@ func parseQuery[T any](query T) fiber.Handler {
 	}
 }
 
-func parseParam[T any](param T) fiber.Handler {
+func parseParam[T any](_ T) fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var param T
 		err := c.ParamsParser(&param)
 		if err != nil {
 			log.Println(err)

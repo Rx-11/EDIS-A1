@@ -52,14 +52,13 @@ func createBook(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
+	b := book
 
-	go func(b models.Book) {
-		SummaryResp, err := config.Gemini.Chat(ai.ChatRequest{Messages: []ai.Message{{Role: "model", Content: "Give a 500 word summary of the following book"}, {Role: "user", Content: fmt.Sprintf("Book Title: %s\nBook Description: %s\nBook Author: %s\nBook ISBN: %s", b.Title, b.Description, b.Author, b.ISBN)}}})
-		if err == nil {
-			b.Summary = &SummaryResp.Response
-			pkg.BookRepo.UpdateBook(db.GetDB(), b)
-		}
-	}(*book)
+	SummaryResp, err := config.Gemini.Chat(ai.ChatRequest{Messages: []ai.Message{{Role: "model", Content: "Give a 500 word summary of the following book"}, {Role: "user", Content: fmt.Sprintf("Book Title: %s\nBook Description: %s\nBook Author: %s\nBook ISBN: %s", b.Title, b.Description, b.Author, b.ISBN)}}})
+	if err == nil {
+		b.Summary = &SummaryResp.Response
+		pkg.BookRepo.UpdateBook(db.GetDB(), *b)
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(book)
 }
