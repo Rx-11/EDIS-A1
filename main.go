@@ -2,7 +2,10 @@ package main
 
 import (
 	"log"
+	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/Rx-11/EDIS-A1/config"
 	"github.com/Rx-11/EDIS-A1/db"
@@ -27,7 +30,20 @@ func main() {
 
 	public.MountRoutes(app)
 
-	log.Println("Server started at http://localhost:80")
-	log.Fatal(app.Listen("0.0.0.0:80"))
+	go func() {
+		log.Println("Server started at http://localhost:80")
+		if err := app.Listen("0.0.0.0:80"); err != nil {
+			log.Printf("Server startup error: %v", err)
+		}
+	}()
 
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	<-c
+
+	log.Println("Gracefully shutting down...")
+	if err := app.Shutdown(); err != nil {
+		log.Printf("Error shutting down server: %v", err)
+	}
+	log.Println("Server stopped")
 }

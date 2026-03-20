@@ -28,7 +28,7 @@ func fetchUserById(c *fiber.Ctx) error {
 
 func fetchUserByUserId(c *fiber.Ctx) error {
 
-	query := c.Locals("param").(fetchUserByUserIdQuery)
+	query := c.Locals("query").(fetchUserByUserIdQuery)
 
 	user, err := pkg.UserRepo.FetchUserByUserID(db.GetDB(), query.UserID)
 	if err != nil {
