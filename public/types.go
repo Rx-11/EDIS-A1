@@ -17,7 +17,7 @@ type createUserRequest struct {
 	Address  string `json:"address" validate:"required"`
 	Address2 string `json:"address2"`
 	City     string `json:"city" validate:"required"`
-	State    string `json:"state" validate:"required,len=2,alpha"`
+	State    string `json:"state" validate:"required,len=2"`
 	Zipcode  string `json:"zipcode" validate:"required"`
 }
 
@@ -34,21 +34,21 @@ type fetchBookByISBNParam struct {
 }
 
 type createBookRequest struct {
-	ISBN        string `json:"isbn" validate:"required"`
-	Title       string `json:"title" validate:"required"`
-	Author      string `json:"author" validate:"required"`
-	Price       string `json:"price" validate:"required,gt=0"`
-	Description string `json:"description"`
-	Genre       string `json:"genre"`
-	Quantity    int    `json:"quantity" validate:"required,gte=0"`
+	ISBN        string  `json:"isbn" validate:"required"`
+	Title       string  `json:"title" validate:"required"`
+	Author      string  `json:"author" validate:"required"`
+	Price       float64 `json:"price" validate:"required,gt=0"`
+	Description string  `json:"description"`
+	Genre       string  `json:"genre"`
+	Quantity    int     `json:"quantity" validate:"required,gte=0"`
 }
 
 type updateBookRequest struct {
-	ISBN        string `json:"isbn" validate:"required"`
-	Title       string `json:"title" `
-	Author      string `json:"author"`
-	Price       string `json:"price"`
-	Description string `json:"description"`
-	Genre       string `json:"genre"`
-	Quantity    int    `json:"quantity"`
+	ISBN        string  `json:"isbn" validate:"required"`
+	Title       string  `json:"title" `
+	Author      string  `json:"author"`
+	Price       float64 `json:"price"`
+	Description string  `json:"description"`
+	Genre       string  `json:"genre"`
+	Quantity    int     `json:"quantity"`
 }
