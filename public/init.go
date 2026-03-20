@@ -23,7 +23,7 @@ func MountRoutes(router *fiber.App) {
 	{
 		bookGroup.Post("/", parseBody(createBookRequest{}), createBook)
 		bookGroup.Get("/:isbn", parseParam(fetchBookByISBNParam{}), fetchBookByISBN)
-		bookGroup.Put("/:isbn", parseParam(updateBookRequest{}), updateBook)
+		bookGroup.Put("/:isbn", parseBody(updateBookRequest{}), updateBook)
 		bookGroup.Get("/isbn/:isbn", parseQuery(fetchBookByISBNParam{}), fetchBookByISBN)
 	}
 
