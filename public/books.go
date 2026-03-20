@@ -3,6 +3,7 @@ package public
 import (
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/Rx-11/EDIS-A1/ai"
 	"github.com/Rx-11/EDIS-A1/common"
@@ -74,7 +75,7 @@ func updateBook(c *fiber.Ctx) error {
 
 	existingBook.Title = body.Title
 	existingBook.Author = body.Author
-	existingBook.Price = body.Price
+	existingBook.Price = strconv.FormatFloat(body.Price, 'f', -1, 64)
 	existingBook.Description = body.Description
 	existingBook.Genre = body.Genre
 	existingBook.Quantity = body.Quantity
