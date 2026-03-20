@@ -27,7 +27,7 @@ func main() {
 
 	public.MountRoutes(app)
 
-	log.Println("Server started at http://localhost:3000")
-	log.Fatal(app.Listen("0.0.0.0:3000"))
+	log.Println("Server started at http://localhost:80")
+	log.Fatal(app.Listen("0.0.0.0:80"))
 
 }
