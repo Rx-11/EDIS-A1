@@ -91,6 +91,6 @@ func updateBook(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
-
+	book.Summary = nil
 	return c.Status(fiber.StatusOK).JSON(book)
 }
