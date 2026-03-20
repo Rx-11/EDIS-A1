@@ -12,6 +12,10 @@ func MountRoutes(router *fiber.App) {
 		return c.SendString("OK")
 	})
 
+	router.Get("/status", func(c *fiber.Ctx) error {
+		return c.SendString("OK")
+	})
+
 	userGroup := router.Group("/customers")
 	{
 		userGroup.Post("/", parseBody(createUserRequest{}), createUser)
@@ -24,7 +28,7 @@ func MountRoutes(router *fiber.App) {
 		bookGroup.Post("/", parseBody(createBookRequest{}), createBook)
 		bookGroup.Get("/isbn/:isbn", parseParam(fetchBookByISBNParam{}), fetchBookByISBN)
 		bookGroup.Get("/:isbn", parseParam(fetchBookByISBNParam{}), fetchBookByISBN)
-		bookGroup.Put("/:isbn", parseBody(updateBookRequest{}), updateBook)
+		bookGroup.Put("/:isbn", parseParam(fetchBookByISBNParam{}), parseBody(updateBookRequest{}), updateBook)
 	}
 
 }

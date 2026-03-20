@@ -40,11 +40,6 @@ func createBook(c *fiber.Ctx) error {
 		))
 	}
 
-	SummaryResp, err := config.Gemini.Chat(ai.ChatRequest{Messages: []ai.Message{{Role: "model", Content: "Give a 500 word summary of the following book"}, {Role: "user", Content: fmt.Sprintf("Book Title: %s\nBook Description: %s\nBook Author: %s\nBook ISBN: %s", body.Title, body.Description, body.Author, body.ISBN)}}})
-	if err != nil {
-		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
-	}
-
 	book, err := pkg.BookRepo.CreateBook(db.GetDB(), models.Book{
 		ISBN:        body.ISBN,
 		Title:       body.Title,
@@ -52,24 +47,38 @@ func createBook(c *fiber.Ctx) error {
 		Price:       body.Price,
 		Description: body.Description,
 		Genre:       body.Genre,
-		Quantity:    body.Quantity,
-		Summary:     SummaryResp.Response,
+		Quantity:    *body.Quantity,
+		Summary:     "",
 	})
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
 
+	go func(b models.Book) {
+		SummaryResp, err := config.Gemini.Chat(ai.ChatRequest{Messages: []ai.Message{{Role: "model", Content: "Give a 500 word summary of the following book"}, {Role: "user", Content: fmt.Sprintf("Book Title: %s\nBook Description: %s\nBook Author: %s\nBook ISBN: %s", b.Title, b.Description, b.Author, b.ISBN)}}})
+		if err == nil {
+			b.Summary = SummaryResp.Response
+			pkg.BookRepo.UpdateBook(db.GetDB(), b)
+		}
+	}(*book)
+
 	return c.Status(fiber.StatusCreated).JSON(book)
 }
 
 func updateBook(c *fiber.Ctx) error {
+	param := c.Locals("param").(fetchBookByISBNParam)
 	body := c.Locals("body").(updateBookRequest)
 
-	existingBook, err := pkg.BookRepo.FetchBookByISBN(db.GetDB(), body.ISBN)
+	if param.ISBN != body.ISBN {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "ISBN in URL does not match ISBN in body"})
+	}
+
+	existingBook, err := pkg.BookRepo.FetchBookByISBN(db.GetDB(), param.ISBN)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return c.Status(common.ErrNotFound.StatusCode).JSON(common.ErrNotFound)
 		}
+		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
 
 	existingBook.Title = body.Title
@@ -77,12 +86,12 @@ func updateBook(c *fiber.Ctx) error {
 	existingBook.Price = body.Price
 	existingBook.Description = body.Description
 	existingBook.Genre = body.Genre
-	existingBook.Quantity = body.Quantity
+	existingBook.Quantity = *body.Quantity
 
 	book, err := pkg.BookRepo.UpdateBook(db.GetDB(), *existingBook)
 	if err != nil {
 		return c.Status(common.ErrInternalServerError.StatusCode).JSON(common.ErrInternalServerError)
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(book)
+	return c.Status(fiber.StatusOK).JSON(book)
 }
