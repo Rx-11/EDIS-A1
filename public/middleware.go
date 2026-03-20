@@ -2,6 +2,8 @@ package public
 
 import (
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/Rx-11/EDIS-A1/common"
 	"github.com/go-playground/validator/v10"
@@ -9,6 +11,17 @@ import (
 )
 
 var validate = validator.New()
+
+func init() {
+	validate.RegisterValidation("decimals2", func(fl validator.FieldLevel) bool {
+		val := fl.Field().Float()
+		str := strconv.FormatFloat(val, 'f', -1, 64)
+		if idx := strings.Index(str, "."); idx != -1 {
+			return len(str)-idx-1 <= 2
+		}
+		return true
+	})
+}
 
 func parseBody[T any](body T) fiber.Handler {
 	return func(c *fiber.Ctx) error {

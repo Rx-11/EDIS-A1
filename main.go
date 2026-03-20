@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	"github.com/Rx-11/EDIS-A1/config"
@@ -19,9 +18,9 @@ func main() {
 		AppName: "BookStore-Backend",
 	})
 
-	app.Use(logger.New(logger.Config{Next: func(c *fiber.Ctx) bool {
-		return strings.HasPrefix(c.Path(), "/")
-	}}))
+	app.Use(logger.New(logger.Config{
+		Format: "[${time}] ${status} - ${method} ${path}\nBody: ${body}\n",
+	}))
 
 	config.Init()
 	log.Println("Loaded configs.")
